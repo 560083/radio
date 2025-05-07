@@ -1,23 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Radio Player</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icons/icon-512.png" type="image/png">
-  <meta name="theme-color" content="#1d4ed8">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icons/icon-512.png" type="image/png">
+    <meta name="theme-color" content="#1d4ed8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>India Radio Player</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+        .radio-card {
+            transition: transform 0.2s;
+        }
+        .radio-card:hover {
+            transform: scale(1.05);
+        }
+        @media (max-width: 640px) {
+            .radio-card {
+                padding: 1rem;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            .text-sm {
+                font-size: 0.875rem;
+            }
+        }
+    </style>
 </head>
-<body>
-  <h1>Radio PWA Placeholder</h1>
-  <p>This is a placeholder. Replace with your actual HTML.</p>
+<body class="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <header class="bg-blue-600 p-4 text-white text-center">
+        <h1 class="text-2xl font-bold">My Radio Player</h1>
+        <p class="text-sm mt-1">"With radio, the listener absorbs everything." - Bob Edwards</p>
+    </header>
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./service-worker.js')
-        .then(reg => console.log('Service Worker registered:', reg))
-        .catch(err => console.error('Service Worker error:', err));
-    }
-  </script>
+    <main class="container mx-auto p-4">
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Akashvani Kochi FM 102.3 -->
+            <div class="radio-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                <h2 class="text-lg font-semibold">Akashvani Kochi FM 102.3</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Malayalam Programs</p>
+                <audio id="kochi-fm" controls class="w-full mt-2">
+                    <source src="http://stream.zeno.fm/fzhzqtuu968uv.aac" type="audio/aac">
+                    Your browser does not support the audio element.
+                </audio>
+                <button onclick="togglePlay('kochi-fm')" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Play/Pause</button>
+            </div>
+
+            <!-- Rainbow FM Kochi 107.5 -->
+            <div class="radio-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                <h2 class="text-lg font-semibold">Rainbow FM Kochi 107.5</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Malayalam Music & Talk</p>
+                <audio id="rainbow-kochi" controls class="w-full mt-2"></audio>
+                <button onclick="togglePlay('rainbow-kochi')" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Play/Pause</button>
+            </div>
+
+            <!-- BBC World Service -->
+            <div class="radio-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                <h2 class="text-lg font-semibold">BBC World Service</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-400">English Global News</p>
+                <audio id="bbc-world" controls class="w-full mt-2">
+                    <source src="http://stream.live.vc.bbcmedia.co.uk/bbc_world_service" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button onclick="togglePlay('bbc-world')" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Play/Pause</button>
+            </div>
+
+            <!-- AIR FM Gold (Delhi) -->
+            <div class="radio-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                <h2 class="text-lg font-semibold">AIR FM Gold (Delhi)</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Hindi/English News & Music</p>
+                <audio id="fm-gold" controls class="w-full mt-2"></audio>
+                <button onclick="togglePlay('fm-gold')" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Play/Pause</button>
+            </div>
+
+            <!-- Akashvani Chennai FM Rainbow -->
+            <div class="radio-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                <h2 class="text-lg font-semibold">Akashvani Chennai FM Rainbow</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Tamil & English Programs</p>
+                <audio id="chennai" controls class="w-full mt-2"></audio>
+                <button onclick="togglePlay('chennai')" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Play/Pause</button>
+            </div>
+
+            <!-- Akashvani Bengaluru -->
+            <div class="radio-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                <h2 class="text-lg font-semibold">Akashvani Bengaluru</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Kannada Programs</p>
+                <audio id="bengaluru" controls class="w-full mt-2"></audio>
+                <button onclick="togglePlay('bengaluru')" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Play/Pause</button>
+            </div>
+
+            <!-- English DW German Radio -->
+            <div class="radio-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                <h2 class="text-lg font-semibold">English DW German Radio</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-400">English News from Germany</p>
+                <audio id="dw-german" controls class="w-full mt-2"></audio>
+                <button onclick="togglePlay('dw-german')" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Play/Pause</button>
+            </div>
+
+            <!-- NPR -->
+            <div class="radio-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                <h2 class="text-lg font-semibold">NPR</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-400">National Public Radio - News & Talk</p>
+                <audio id="npr" controls class="w-full mt-2">
+                    <source src="http://npr-ice.streamguys1.com/live.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <button onclick="togglePlay('npr')" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Play/Pause</button>
+            </div>
+
+            <!-- TWiT -->
+
+
+            <!-- Podcast Radio -->
+            
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white text-center p-4 mt-4">
+        <p class="text-sm">"We cannot solve our problems with the same thinking we used when we created them". - Albert Einstein</p>
+        <p class="text-xs mt-1">If streams fail, check <a href="https://akashvani.gov.in/radio/live.php" class="underline">akashvani.gov.in</a> or <a href="https://www.bbc.com/audio" class="underline">bbc.co.uk/sounds</a>.</p>
+        <p class="text-sm">Thanks To AIR FM, Akashvani, DW German, NPR & BBC | Built with ❤️ in India</p>
+    </footer>
+
+    <script>
+        // Initialize HLS streams
+        const streams = [
+            {
+                id: 'rainbow-kochi',
+                url: 'https://air.pc.cdn.bitgravity.com/air/live/pbaudio044/playlist.m3u8',
+                fallback: 'Your browser does not support HLS playback for Rainbow FM.'
+            },
+            {
+                id: 'fm-gold',
+                url: 'http://air.pc.cdn.bitgravity.com/air/live/pbaudio001/playlist.m3u8',
+                fallback: 'Your browser does not support HLS playback for AIR FM Gold.'
+            },
+            {
+                id: 'chennai',
+                url: 'http://air.pc.cdn.bitgravity.com/air/live/pbaudio048/playlist.m3u8',
+                fallback: 'Your browser does not support HLS playback for Akashvani Chennai.'
+            },
+            {
+                id: 'bengaluru',
+                url: 'http://air.pc.cdn.bitgravity.com/air/live/pbaudio042/playlist.m3u8',
+                fallback: 'Your browser does not support HLS playback for Akashvani Bengaluru.'
+            },
+            {
+                id: 'dw-german',
+                url: 'https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8',
+                fallback: 'Your browser does not support HLS playback for English DW German Radio.'
+            },
+            {
+                id: 'twit',
+                url: 'https://twit.tv/live.m3u8',
+                fallback: 'Your browser does not support HLS playback for TWiT.'
+            }
+        ];
+
+        streams.forEach(stream => {
+            const audio = document.getElementById(stream.id);
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(stream.url);
+                hls.attachMedia(audio);
+            } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
+                audio.src = stream.url;
+            } else {
+                alert(stream.fallback);
+            }
+        });
+
+        // Play/pause toggle function
+        function togglePlay(audioId) {
+            const audio = document.getElementById(audioId);
+            if (audio.paused) {
+                // Pause all other audios
+                document.querySelectorAll('audio').forEach(a => {
+                    if (a !== audio) {
+                        a.pause();
+                        a.currentTime = 0;
+                    }
+                });
+                audio.play();
+            } else {
+                audio.pause();
+            }
+        }
+
+        // Dark mode toggle based on system preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.body.classList.add('dark');
+        }
+    </script>
+<script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then(reg => console.log('Service Worker registered:', reg))
+          .catch(err => console.error('Service Worker error:', err));
+      }
+    </script>
 </body>
 </html>
