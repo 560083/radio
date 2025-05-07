@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Radio Player</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-512.png" type="image/png">
+  <meta name="theme-color" content="#1d4ed8">
+</head>
+<body>
+  <h1>Radio PWA Placeholder</h1>
+  <p>This is a placeholder. Replace with your actual HTML.</p>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(reg => console.log('Service Worker registered:', reg))
+        .catch(err => console.error('Service Worker error:', err));
+    }
+  </script>
+</body>
+</html>
