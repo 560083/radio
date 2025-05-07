@@ -48,4 +48,3 @@ service-worker.js    → Offline support
 - BBC World Service  
 - NPR Live  
 - DW News  
-- WSJ & TWiT (for tech content)
