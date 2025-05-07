@@ -113,11 +113,7 @@
                 <button onclick="togglePlay('npr')" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Play/Pause</button>
             </div>
 
-            <!-- TWiT -->
 
-
-            <!-- Podcast Radio -->
-            
         </section>
     </main>
 
@@ -155,11 +151,6 @@
                 url: 'https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8',
                 fallback: 'Your browser does not support HLS playback for English DW German Radio.'
             },
-            {
-                id: 'twit',
-                url: 'https://twit.tv/live.m3u8',
-                fallback: 'Your browser does not support HLS playback for TWiT.'
-            }
         ];
 
         streams.forEach(stream => {
