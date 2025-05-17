@@ -4,7 +4,7 @@ A minimalist Progressive Web App (PWA) that lets you listen to live radio stream
 
 ## 🌐 Live Demo
 
-[**👉 Try it here**](https://yourusername.github.io/radio-pwa/)  
+[**👉 Try it here**](https://github.com/560083/radio)  
 *(Replace with your actual GitHub Pages link)*
 
 ## 📱 Features
