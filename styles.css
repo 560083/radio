@@ -1,0 +1,38 @@
+body {
+  font-family: 'Arial', sans-serif;
+}
+.radio-card {
+  transition: transform 0.2s;
+}
+.radio-card:hover {
+  transform: scale(1.05);
+}
+
+/* === NEW: Loading Indicator Styles === */
+.loading-indicator {
+  display: none;
+  color: #a1a1aa; /* gray-400 */
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+.loading-indicator.active {
+  display: block;
+}
+
+/* === NOW PLAYING Styles === */
+.now-playing {
+  display: none;
+}
+.now-playing.active {
+  display: block;
+  color: #16a34a; /* green-600 */
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+/* === NEW: Volume Slider Styles === */
+.volume-slider {
+  /* Applying tailwind classes */
+  @apply w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-3 dark:bg-gray-700;
+}
+/* You can add custom styles for the slider thumb here */

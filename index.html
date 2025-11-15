@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Radio Player</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+
+  <header class="bg-blue-600 p-4 text-white text-center">
+    <h1 class="text-2xl font-bold">My Radio Player</h1>
+    <p class="text-sm mt-1">"With radio, the listener absorbs everything." -- Bob Edwards</p>
+  </header>
+
+  <main class="container mx-auto p-4">
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+      <div class="radio-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold">Akashvani Kochi FM 102.3</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Malayalam Programs</p>
+        <audio id="kochi-fm" class="w-full mt-2"></audio>
+        <button onclick="togglePlay('kochi-fm', this)" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Play</button>
+        <input type="range" id="volume-kochi-fm" min="0" max="1" step="0.05" value="1" oninput="changeVolume('kochi-fm', this.value)" class="volume-slider">
+        <p id="loading-kochi-fm" class="loading-indicator">⏳ Loading...</p>
+        <p id="now-kochi-fm" class="now-playing">🔵 Now Playing</p>
+      </div>
+
+      <div class="radio-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold">Rainbow FM Kochi 107.5</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Malayalam Music & Talk</p>
+        <audio id="rainbow-kochi" class="w-full mt-2"></audio>
+        <button onclick="togglePlay('rainbow-kochi', this)" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Play</button>
+        <input type="range" id="volume-rainbow-kochi" min="0" max="1" step="0.05" value="1" oninput="changeVolume('rainbow-kochi', this.value)" class="volume-slider">
+        <p id="loading-rainbow-kochi" class="loading-indicator">⏳ Loading...</p>
+        <p id="now-rainbow-kochi" class="now-playing">🔵 Now Playing</p>
+      </div>
+
+      <div class="radio-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold">BBC World Service</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400">English Global News</p>
+        <audio id="bbc-world" class="w-full mt-2"></audio>
+        <button onclick="togglePlay('bbc-world', this)" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Play</button>
+        <input type="range" id="volume-bbc-world" min="0" max="1" step="0.05" value="1" oninput="changeVolume('bbc-world', this.value)" class="volume-slider">
+        <p id="loading-bbc-world" class="loading-indicator">⏳ Loading...</p>
+        <p id="now-bbc-world" class="now-playing">🔵 Now Playing</p>
+      </div>
+
+      <div class="radio-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold">AIR FM Gold (Delhi)</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Hindi/English News & Music</p>
+        <audio id="fm-gold" class="w-full mt-2"></audio>
+        <button onclick="togglePlay('fm-gold', this)" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Play</button>
+        <input type="range" id="volume-fm-gold" min="0" max="1" step="0.05" value="1" oninput="changeVolume('fm-gold', this.value)" class="volume-slider">
+        <p id="loading-fm-gold" class="loading-indicator">⏳ Loading...</p>
+        <p id="now-fm-gold" class="now-playing">🔵 Now Playing</p>
+      </div>
+
+      <div class="radio-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold">Akashvani Chennai FM Rainbow</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Tamil & English Programs</p>
+        <audio id="chennai" class="w-full mt-2"></audio>
+        <button onclick="togglePlay('chennai', this)" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Play</button>
+        <input type="range" id="volume-chennai" min="0" max="1" step="0.05" value="1" oninput="changeVolume('chennai', this.value)" class="volume-slider">
+        <p id="loading-chennai" class="loading-indicator">⏳ Loading...</p>
+        <p id="now-chennai" class="now-playing">🔵 Now Playing</p>
+      </div>
+
+      <div class="radio-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold">Akashvani Bengaluru</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400">Kannada Programs</p>
+        <audio id="bengaluru" class="w-full mt-2"></audio>
+        <button onclick="togglePlay('bengaluru', this)" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Play</button>
+        <input type="range" id="volume-bengaluru" min="0" max="1" step="0.05" value="1" oninput="changeVolume('bengaluru', this.value)" class="volume-slider">
+        <p id="loading-bengaluru" class="loading-indicator">⏳ Loading...</p>
+        <p id="now-bengaluru" class="now-playing">🔵 Now Playing</p>
+      </div>
+
+      <div class="radio-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold">English DW German Radio</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400">English News from Germany</p>
+        <audio id="dw-german" class="w-full mt-2"></audio>
+        <button onclick="togglePlay('dw-german', this)" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Play</button>
+        <input type="range" id="volume-dw-german" min="0" max="1" step="0.05" value="1" oninput="changeVolume('dw-german', this.value)" class="volume-slider">
+        <p id="loading-dw-german" class="loading-indicator">⏳ Loading...</p>
+        <p id="now-dw-german" class="now-playing">🔵 Now Playing</p>
+      </div>
+
+      <div class="radio-card bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold">NPR</h2>
+        <p class="text-sm text-gray-600 dark:text-gray-400">National Public Radio - News & Talk</p>
+        <audio id="npr" class="w-full mt-2"></audio>
+        <button onclick="togglePlay('npr', this)" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Play</button>
+        <input type="range" id="volume-npr" min="0" max="1" step="0.05" value="1" oninput="changeVolume('npr', this.value)" class="volume-slider">
+        <p id="loading-npr" class="loading-indicator">⏳ Loading...</p>
+        <p id="now-npr" class="now-playing">🔵 Now Playing</sP>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="bg-gray-800 text-white text-center p-4 mt-4">
+    <p class="text-sm">"We cannot solve our problems with the same thinking we used when we created them." - Albert Einstein</p>
+    <p class="text-xs mt-1">If streams fail, check <a href="https://akashvani.gov.in/radio/live.php" class="underline">akashvani.gov.in</a> or <a href="https://www.bbc.com/audio" class="underline">bbc.co.uk/sounds</a>.</p>
+    <p class="text-xs mt-1">Cuesheet: ALL INDIA RADIO KOCHI – <a href="https://cuesheets.prasarbharati.org" class="underline">102.3 MHz</a>.</p>
+    <p class="text-sm">Thanks To AIR FM, Akashvani, DW German, NPR & BBC | Built with ❤️ in India</p>
+  </footer>
+
+  <script src="scripts.js"></script>
+</body>
+</html>
