@@ -1,10 +1,10 @@
 // Centralized station streams
 const streams = [
-  // HLS Streams
-  { id: 'kochi-fm', url: 'https://air.pc.cdn.bitgravity.com/air/live/pbaudio045/playlist.m3u8', type: 'hls' },
-  { id: 'rainbow-kochi', url: 'https://air.pc.cdn.bitgravity.com/air/live/pbaudio044/playlist.m3u8', type: 'hls' },
+  // HLS Streams (Updated Akamai CDN endpoints for Akashvani)
+  { id: 'kochi-fm', url: 'https://prasarbharati.akamaized.net/hls/live/2042079/akashvani_kochi/index.m3u8', type: 'hls' },
+  { id: 'rainbow-kochi', url: 'https://prasarbharati.akamaized.net/hls/live/2042080/fm_rainbow_kochi/index.m3u8', type: 'hls' },
   { id: 'fm-gold', url: 'https://air.pc.cdn.bitgravity.com/air/live/pbaudio001/playlist.m3u8', type: 'hls' },
-  { id: 'chennai', url: 'https://air.pc.cdn.bitgravity.com/air/live/pbaudio048/playlist.m3u8', type: 'hls' },
+  { id: 'chennai', url: 'https://prasarbharati.akamaized.net/hls/live/2042082/akashvani_chennai_rainbow/index.m3u8', type: 'hls' },
   { id: 'bengaluru', url: 'https://air.pc.cdn.bitgravity.com/air/live/pbaudio042/playlist.m3u8', type: 'hls' },
   { id: 'dw-german', url: 'https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8', type: 'hls' },
   
@@ -28,16 +28,23 @@ streams.forEach(({ id, url, type }) => {
       const hls = new Hls();
       hls.loadSource(url);
       hls.attachMedia(audio);
+
+      // Handle HLS level errors (e.g., stream link dead or 404)
+      hls.on(Hls.Events.ERROR, (event, data) => {
+        if (data.fatal) {
+          showStreamError(id, loadingIndicator, nowPlayingIndicator);
+        }
+      });
     } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
       audio.src = url;
     } else {
-      audio.outerHTML = `<p class="text-red-500">HLS stream not supported.</p>`;
+      audio.outerHTML = `<p class="text-red-500 text-xs">HLS stream not supported.</p>`;
     }
   } else if (type === 'native') {
     audio.src = url;
   }
 
-  // --- NEW: Add Event Listeners for Loading/Playing Indicators ---
+  // --- Add Event Listeners for Loading/Playing Indicators ---
   if (loadingIndicator && nowPlayingIndicator) {
     audio.addEventListener('waiting', () => {
       loadingIndicator.classList.add('active');
@@ -50,6 +57,7 @@ streams.forEach(({ id, url, type }) => {
     audio.addEventListener('playing', () => {
       loadingIndicator.classList.remove('active');
       nowPlayingIndicator.classList.add('active');
+      clearStreamError(id);
     });
     audio.addEventListener('pause', () => {
       loadingIndicator.classList.remove('active');
@@ -59,13 +67,42 @@ streams.forEach(({ id, url, type }) => {
       loadingIndicator.classList.remove('active');
       nowPlayingIndicator.classList.remove('active');
     });
+    audio.addEventListener('error', () => {
+      showStreamError(id, loadingIndicator, nowPlayingIndicator);
+    });
   }
 });
 
-// --- NEW: Function to change volume ---
+// Helper function to display stream errors dynamically
+function showStreamError(id, loading, nowPlaying) {
+  loading?.classList.remove('active');
+  nowPlaying?.classList.remove('active');
+
+  const card = document.getElementById(id)?.parentNode;
+  if (!card) return;
+
+  let errP = document.getElementById(`err-${id}`);
+  if (!errP) {
+    errP = document.createElement('p');
+    errP.id = `err-${id}`;
+    errP.className = 'text-xs text-red-500 font-semibold mt-2';
+    card.appendChild(errP);
+  }
+  errP.textContent = '⚠️ Stream offline or URL changed.';
+}
+
+// Helper function to clear error message once playing successfully
+function clearStreamError(id) {
+  const errP = document.getElementById(`err-${id}`);
+  if (errP) errP.remove();
+}
+
+// Function to change volume
 function changeVolume(audioId, volume) {
   const audio = document.getElementById(audioId);
-  audio.volume = parseFloat(volume);
+  if (audio) {
+    audio.volume = parseFloat(volume);
+  }
 }
 
 // Play/pause toggle function
@@ -75,15 +112,18 @@ function togglePlay(audioId, btn) {
   const nowPlayingIndicator = document.getElementById(`now-${audioId}`);
   const volumeSlider = document.getElementById(`volume-${audioId}`);
 
+  if (!audio) return;
+
   if (audio.paused) {
     // Pause all other audios, hide indicators, and reset buttons
     document.querySelectorAll('audio').forEach(a => {
       if (a !== audio) {
         a.pause();
-        a.currentTime = 0;
         
-        const otherBtn = a.nextElementSibling;
-        if (otherBtn && otherBtn.tagName === 'BUTTON') {
+        // Reset play button label for other stations
+        const otherCard = a.parentNode;
+        const otherBtn = otherCard ? otherCard.querySelector('button') : null;
+        if (otherBtn) {
           otherBtn.textContent = 'Play';
         }
         
@@ -94,7 +134,9 @@ function togglePlay(audioId, btn) {
     });
 
     // Play this one
-    audio.play();
+    audio.play().catch(() => {
+      showStreamError(audioId, loadingIndicator, nowPlayingIndicator);
+    });
     btn.textContent = 'Pause';
     loadingIndicator?.classList.add('active'); // Show loading immediately
     
