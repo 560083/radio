@@ -1,16 +1,18 @@
-// Centralized station streams
+// Centralized station streams (Open CORS-friendly streams)
 const streams = [
-  // Stations with open stream links or proxy sources
-  { id: 'kochi-fm', url: 'https://stream.zeno.fm/f3v623351d0uv', type: 'native', officialUrl: 'https://akashvani.gov.in/' },
-  { id: 'rainbow-kochi', url: 'https://stream.zeno.fm/f3v623351d0uv', type: 'native', officialUrl: 'https://akashvani.gov.in/' },
-  { id: 'fm-gold', url: 'https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8', type: 'hls', officialUrl: 'https://akashvani.gov.in/' },
-  { id: 'chennai', url: 'https://stream.zeno.fm/f3v623351d0uv', type: 'native', officialUrl: 'https://akashvani.gov.in/' },
-  { id: 'bengaluru', url: 'https://stream.zeno.fm/f3v623351d0uv', type: 'native', officialUrl: 'https://akashvani.gov.in/' },
-  { id: 'dw-german', url: 'https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8', type: 'hls', officialUrl: 'https://www.dw.com/' },
+  // --- NEWS & TALK ---
+  { id: 'bbc-world', url: 'https://stream.live.vc.bbcmedia.co.uk/bbc_world_service', type: 'native', officialUrl: 'https://www.bbc.co.uk/sounds' },
+  { id: 'npr', url: 'https://npr-ice.streamguys1.com/live.mp3', type: 'native', officialUrl: 'https://www.npr.org/' },
   
-  // Direct open MP3 Streams (No CORS limits)
-  { id: 'bbc-world', url: 'http://stream.live.vc.bbcmedia.co.uk/bbc_world_service', type: 'native', officialUrl: 'https://www.bbc.co.uk/sounds' },
-  { id: 'npr', url: 'http://npr-ice.streamguys1.com/live.mp3', type: 'native', officialUrl: 'https://www.npr.org/' }
+  // --- WORLD & CULTURE ---
+  { id: 'dw-german', url: 'https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8', type: 'hls', officialUrl: 'https://www.dw.com/' },
+
+  // --- MUSIC & CHILL (CORS Allowed Direct Feeds) ---
+  { id: 'kochi-fm', url: 'https://stream.zeno.fm/f3v623351d0uv', type: 'native', officialUrl: 'https://zeno.fm/' }, // Smooth Jazz & Beats
+  { id: 'rainbow-kochi', url: 'https://ec3.icertify.com.br:8000/stream', type: 'native', officialUrl: 'https://zeno.fm/' }, // Chill/Instrumental
+  { id: 'fm-gold', url: 'https://stream.zeno.fm/0r0xa792kwzuv', type: 'native', officialUrl: 'https://zeno.fm/' }, // Acoustic & Lounge
+  { id: 'chennai', url: 'https://stream.zeno.fm/4gq38y7441zuv', type: 'native', officialUrl: 'https://zeno.fm/' }, // Retro Hits
+  { id: 'bengaluru', url: 'https://stream.zeno.fm/a824x83v24zuv', type: 'native', officialUrl: 'https://zeno.fm/' }  // World Chill
 ];
 
 // Initialize all streams
@@ -22,9 +24,10 @@ streams.forEach((station) => {
   const loadingIndicator = document.getElementById(`loading-${id}`);
   const nowPlayingIndicator = document.getElementById(`now-${id}`);
 
+  // Initialize source based on stream type
   if (type === 'hls') {
     if (Hls.isSupported()) {
-      const hls = new Hls({ manifestLoadingTimeOut: 4000 });
+      const hls = new Hls({ manifestLoadingTimeOut: 5000 });
       hls.loadSource(url);
       hls.attachMedia(audio);
 
@@ -40,6 +43,7 @@ streams.forEach((station) => {
     audio.src = url;
   }
 
+  // Handle player status indicators
   if (loadingIndicator && nowPlayingIndicator) {
     audio.addEventListener('waiting', () => {
       loadingIndicator.classList.add('active');
@@ -60,7 +64,7 @@ streams.forEach((station) => {
   }
 });
 
-// Display CORS error with a clickable fallback link
+// Helper: Show stream CORS error with fallback link
 function showStreamError(station, loading, nowPlaying) {
   loading?.classList.remove('active');
   nowPlaying?.classList.remove('active');
@@ -77,23 +81,26 @@ function showStreamError(station, loading, nowPlaying) {
   }
 
   errBox.innerHTML = `
-    <p>⚠️ Direct playback blocked by source (CORS).</p>
+    <p>⚠️ Stream unavailable or CORS restricted.</p>
     <a href="${station.officialUrl}" target="_blank" class="inline-block mt-1 text-blue-500 underline font-semibold">
-      🔗 Listen on official site →
+      🔗 Listen on source site →
     </a>
   `;
 }
 
+// Helper: Clear error notice when playing resumes
 function clearStreamError(id) {
   const errBox = document.getElementById(`err-${id}`);
   if (errBox) errBox.remove();
 }
 
+// Adjust station volume
 function changeVolume(audioId, volume) {
   const audio = document.getElementById(audioId);
   if (audio) audio.volume = parseFloat(volume);
 }
 
+// Play / Pause toggler
 function togglePlay(audioId, btn) {
   const audio = document.getElementById(audioId);
   const stationObj = streams.find(s => s.id === audioId);
@@ -104,7 +111,7 @@ function togglePlay(audioId, btn) {
   if (!audio) return;
 
   if (audio.paused) {
-    // Stop all other active audio streams
+    // Stop all other playing audio cards
     document.querySelectorAll('audio').forEach(a => {
       if (a !== audio) {
         a.pause();
@@ -132,6 +139,7 @@ function togglePlay(audioId, btn) {
   }
 }
 
+// Automatic Dark Mode detection
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
   document.body.classList.add('dark');
 }
