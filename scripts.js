@@ -1,21 +1,21 @@
 // Centralized station streams
-// Note: Akashvani streams enforce strict CORS & token restrictions on external websites.
 const streams = [
-  // Stable HLS & Direct Streams
-  { id: 'kochi-fm', url: 'https://stream.zeno.fm/f3v623351d0uv', type: 'native' }, // Alternative public relay / live audio
-  { id: 'rainbow-kochi', url: 'https://stream.zeno.fm/f3v623351d0uv', type: 'native' }, 
-  { id: 'fm-gold', url: 'https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8', type: 'hls' },
-  { id: 'chennai', url: 'https://stream.zeno.fm/f3v623351d0uv', type: 'native' },
-  { id: 'bengaluru', url: 'https://stream.zeno.fm/f3v623351d0uv', type: 'native' },
-  { id: 'dw-german', url: 'https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8', type: 'hls' },
+  // Stations with open stream links or proxy sources
+  { id: 'kochi-fm', url: 'https://stream.zeno.fm/f3v623351d0uv', type: 'native', officialUrl: 'https://akashvani.gov.in/' },
+  { id: 'rainbow-kochi', url: 'https://stream.zeno.fm/f3v623351d0uv', type: 'native', officialUrl: 'https://akashvani.gov.in/' },
+  { id: 'fm-gold', url: 'https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8', type: 'hls', officialUrl: 'https://akashvani.gov.in/' },
+  { id: 'chennai', url: 'https://stream.zeno.fm/f3v623351d0uv', type: 'native', officialUrl: 'https://akashvani.gov.in/' },
+  { id: 'bengaluru', url: 'https://stream.zeno.fm/f3v623351d0uv', type: 'native', officialUrl: 'https://akashvani.gov.in/' },
+  { id: 'dw-german', url: 'https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8', type: 'hls', officialUrl: 'https://www.dw.com/' },
   
-  // Native Direct MP3 Streams (Reliable, no CORS block)
-  { id: 'bbc-world', url: 'http://stream.live.vc.bbcmedia.co.uk/bbc_world_service', type: 'native' },
-  { id: 'npr', url: 'http://npr-ice.streamguys1.com/live.mp3', type: 'native' }
+  // Direct open MP3 Streams (No CORS limits)
+  { id: 'bbc-world', url: 'http://stream.live.vc.bbcmedia.co.uk/bbc_world_service', type: 'native', officialUrl: 'https://www.bbc.co.uk/sounds' },
+  { id: 'npr', url: 'http://npr-ice.streamguys1.com/live.mp3', type: 'native', officialUrl: 'https://www.npr.org/' }
 ];
 
 // Initialize all streams
-streams.forEach(({ id, url, type }) => {
+streams.forEach((station) => {
+  const { id, url, type } = station;
   const audio = document.getElementById(id);
   if (!audio) return;
 
@@ -24,16 +24,13 @@ streams.forEach(({ id, url, type }) => {
 
   if (type === 'hls') {
     if (Hls.isSupported()) {
-      const hls = new Hls({
-        manifestLoadingTimeOut: 5000,
-        manifestLoadingMaxRetry: 2
-      });
+      const hls = new Hls({ manifestLoadingTimeOut: 4000 });
       hls.loadSource(url);
       hls.attachMedia(audio);
 
       hls.on(Hls.Events.ERROR, (event, data) => {
         if (data.fatal) {
-          showStreamError(id, loadingIndicator, nowPlayingIndicator);
+          showStreamError(station, loadingIndicator, nowPlayingIndicator);
         }
       });
     } else if (audio.canPlayType('application/vnd.apple.mpegurl')) {
@@ -58,31 +55,38 @@ streams.forEach(({ id, url, type }) => {
       nowPlayingIndicator.classList.remove('active');
     });
     audio.addEventListener('error', () => {
-      showStreamError(id, loadingIndicator, nowPlayingIndicator);
+      showStreamError(station, loadingIndicator, nowPlayingIndicator);
     });
   }
 });
 
-function showStreamError(id, loading, nowPlaying) {
+// Display CORS error with a clickable fallback link
+function showStreamError(station, loading, nowPlaying) {
   loading?.classList.remove('active');
   nowPlaying?.classList.remove('active');
 
-  const card = document.getElementById(id)?.parentNode;
+  const card = document.getElementById(station.id)?.parentNode;
   if (!card) return;
 
-  let errP = document.getElementById(`err-${id}`);
-  if (!errP) {
-    errP = document.createElement('p');
-    errP.id = `err-${id}`;
-    errP.className = 'text-xs text-red-500 font-semibold mt-2';
-    card.appendChild(errP);
+  let errBox = document.getElementById(`err-${station.id}`);
+  if (!errBox) {
+    errBox = document.createElement('div');
+    errBox.id = `err-${station.id}`;
+    errBox.className = 'mt-2 text-xs text-red-500 font-medium';
+    card.appendChild(errBox);
   }
-  errP.textContent = '⚠️ Restricted by source (CORS/Geo-block).';
+
+  errBox.innerHTML = `
+    <p>⚠️ Direct playback blocked by source (CORS).</p>
+    <a href="${station.officialUrl}" target="_blank" class="inline-block mt-1 text-blue-500 underline font-semibold">
+      🔗 Listen on official site →
+    </a>
+  `;
 }
 
 function clearStreamError(id) {
-  const errP = document.getElementById(`err-${id}`);
-  if (errP) errP.remove();
+  const errBox = document.getElementById(`err-${id}`);
+  if (errBox) errBox.remove();
 }
 
 function changeVolume(audioId, volume) {
@@ -92,6 +96,7 @@ function changeVolume(audioId, volume) {
 
 function togglePlay(audioId, btn) {
   const audio = document.getElementById(audioId);
+  const stationObj = streams.find(s => s.id === audioId);
   const loadingIndicator = document.getElementById(`loading-${audioId}`);
   const nowPlayingIndicator = document.getElementById(`now-${audioId}`);
   const volumeSlider = document.getElementById(`volume-${audioId}`);
@@ -99,6 +104,7 @@ function togglePlay(audioId, btn) {
   if (!audio) return;
 
   if (audio.paused) {
+    // Stop all other active audio streams
     document.querySelectorAll('audio').forEach(a => {
       if (a !== audio) {
         a.pause();
@@ -110,7 +116,7 @@ function togglePlay(audioId, btn) {
     });
 
     audio.play().catch(() => {
-      showStreamError(audioId, loadingIndicator, nowPlayingIndicator);
+      if (stationObj) showStreamError(stationObj, loadingIndicator, nowPlayingIndicator);
     });
     btn.textContent = 'Pause';
     loadingIndicator?.classList.add('active');
