@@ -8,11 +8,11 @@ const streams = [
   { id: 'dw-german', url: 'https://dwamdstream102.akamaized.net/hls/live/2015525/dwstream102/index.m3u8', type: 'hls', officialUrl: 'https://www.dw.com/' },
 
   // --- MUSIC & CHILL (CORS Allowed Direct Feeds) ---
-  { id: 'kochi-fm', url: 'https://stream.zeno.fm/f3v623351d0uv', type: 'native', officialUrl: 'https://zeno.fm/' }, // Smooth Jazz & Beats
-  { id: 'rainbow-kochi', url: 'https://ec3.icertify.com.br:8000/stream', type: 'native', officialUrl: 'https://zeno.fm/' }, // Chill/Instrumental
-  { id: 'fm-gold', url: 'https://stream.zeno.fm/0r0xa792kwzuv', type: 'native', officialUrl: 'https://zeno.fm/' }, // Acoustic & Lounge
-  { id: 'chennai', url: 'https://stream.zeno.fm/4gq38y7441zuv', type: 'native', officialUrl: 'https://zeno.fm/' }, // Retro Hits
-  { id: 'bengaluru', url: 'https://stream.zeno.fm/a824x83v24zuv', type: 'native', officialUrl: 'https://zeno.fm/' }  // World Chill
+ // { id: 'kochi-fm', url: 'https://stream.zeno.fm/f3v623351d0uv', type: 'native', officialUrl: 'https://zeno.fm/' }, // Smooth Jazz & Beats
+ // { id: 'rainbow-kochi', url: 'https://ec3.icertify.com.br:8000/stream', type: 'native', officialUrl: 'https://zeno.fm/' }, // Chill/Instrumental
+ // { id: 'fm-gold', url: 'https://stream.zeno.fm/0r0xa792kwzuv', type: 'native', officialUrl: 'https://zeno.fm/' }, // Acoustic & Lounge
+ // { id: 'chennai', url: 'https://stream.zeno.fm/4gq38y7441zuv', type: 'native', officialUrl: 'https://zeno.fm/' }, // Retro Hits
+ // { id: 'bengaluru', url: 'https://stream.zeno.fm/a824x83v24zuv', type: 'native', officialUrl: 'https://zeno.fm/' }  // World Chill
 ];
 
 // Initialize all streams
